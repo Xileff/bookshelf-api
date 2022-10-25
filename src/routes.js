@@ -1,4 +1,6 @@
-const { addBookHandler, getAllBooksHandler, getBookDetail } = require('./handler');
+const {
+  addBookHandler, getAllBooksHandler, getBookDetail, updateBook,
+} = require('./handler');
 
 const routes = [
   // Add book
@@ -20,6 +22,13 @@ const routes = [
     method: 'GET',
     path: '/books/{bookId}',
     handler: getBookDetail,
+  },
+
+  // Update book
+  {
+    method: 'PUT',
+    path: '/books/{bookId}',
+    handler: updateBook,
   },
 ];
 

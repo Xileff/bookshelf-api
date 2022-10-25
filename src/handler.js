@@ -118,4 +118,73 @@ const getBookDetail = (request, h) => {
   return response;
 };
 
-module.exports = { addBookHandler, getAllBooksHandler, getBookDetail };
+const updateBook = (request, h) => {
+  const body = request.payload;
+  // Case : Payload tidak memiliki properti name
+  if (!Object.hasOwn(body, 'name')) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Gagal memperbarui buku. Mohon isi nama buku',
+    });
+
+    response.code(400);
+    return response;
+  }
+
+  // Case : Payload memiliki readPage > readCount
+  if (body.readPage > body.pageCount) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount',
+    });
+
+    response.code(400);
+    return response;
+  }
+
+  // Case : Payload memiliki id yang tidak ditemukan oleh server
+  const { bookId } = request.params;
+  const index = books.findIndex((book) => book.id === bookId);
+  if (index === -1) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Gagal memperbarui buku. Id tidak ditemukan',
+    });
+
+    response.code(404);
+    return response;
+  }
+
+  // Proses update
+  const {
+    name, year, author, summary, publisher, pageCount, readPage, reading,
+  } = request.payload;
+
+  const updatedAt = new Date().toISOString();
+
+  // Update buku
+  books[index] = {
+    ...books[index],
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading,
+    updatedAt,
+  };
+
+  const response = h.response({
+    status: 'success',
+    message: 'Buku berhasil diperbarui',
+  });
+
+  response.code(200);
+  return response;
+};
+
+module.exports = {
+  addBookHandler, getAllBooksHandler, getBookDetail, updateBook,
+};
