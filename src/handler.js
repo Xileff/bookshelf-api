@@ -26,13 +26,13 @@ const addBookHandler = (request, h) => {
     return response;
   }
 
-  // Coba memasukkan buku
+  // Buat variabel yang diperlukan, dan masukkan buku
   const {
     name, year, author, summary, publisher, pageCount, readPage, reading,
-  } = request.payload;
+  } = body;
 
   const id = nanoid(16);
-  const finished = false;
+  const finished = (pageCount === readPage);
   const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
 
@@ -80,10 +80,35 @@ const addBookHandler = (request, h) => {
 };
 
 const getAllBooksHandler = (request, h) => {
+  const { name, reading, finished } = request.query;
+  let result = books;
+
+  // Optional Case : Cek query param 'name'
+  if (name !== undefined) {
+    result = books.filter((book) => book.name.toLowerCase().includes(name.toLowerCase()));
+  }
+
+  // Optional Case : Cek query param 'reading'
+  if (reading !== undefined) {
+    result = books.filter((book) => Boolean(book.reading) === Boolean(reading));
+  }
+
+  // Optional Case : Cek query param 'finished'
+  if (finished !== undefined) {
+    result = books.filter((book) => Number(book.finished) === Number(finished));
+  }
+
+  // Case : Semua buku
   const response = h.response({
     status: 'success',
     data: {
-      books: books.map((book) => ({ id: book.id, name: book.name, publisher: book.publisher })),
+      books: result.map((book) => (
+        {
+          id: book.id,
+          name: book.name,
+          publisher: book.publisher,
+        }
+      )),
     },
   });
 
@@ -161,6 +186,7 @@ const updateBook = (request, h) => {
   } = request.payload;
 
   const updatedAt = new Date().toISOString();
+  const finished = (pageCount === readPage);
 
   // Update buku
   books[index] = {
@@ -172,6 +198,7 @@ const updateBook = (request, h) => {
     publisher,
     pageCount,
     readPage,
+    finished,
     reading,
     updatedAt,
   };
