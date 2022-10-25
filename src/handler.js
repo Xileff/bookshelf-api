@@ -98,7 +98,7 @@ const getAllBooksHandler = (request, h) => {
     result = books.filter((book) => Number(book.finished) === Number(finished));
   }
 
-  // Case : Semua buku
+  // Berikan hasil
   const response = h.response({
     status: 'success',
     data: {
@@ -180,10 +180,10 @@ const updateBook = (request, h) => {
     return response;
   }
 
-  // Proses update
+  // Buat variabel yang diperlukan, lalu lakukan update
   const {
     name, year, author, summary, publisher, pageCount, readPage, reading,
-  } = request.payload;
+  } = body;
 
   const updatedAt = new Date().toISOString();
   const finished = (pageCount === readPage);
