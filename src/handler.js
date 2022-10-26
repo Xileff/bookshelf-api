@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 const { nanoid } = require('nanoid');
 const books = require('./books');
 
@@ -5,7 +6,7 @@ const addBookHandler = (request, h) => {
   const body = request.payload;
 
   // Case : Request body tidak memiliki 'name'
-  if (!Object.hasOwn(body, 'name')) {
+  if (!body.hasOwnProperty('name')) {
     const response = h.response({
       status: 'fail',
       message: 'Gagal menambahkan buku. Mohon isi nama buku',
@@ -146,7 +147,7 @@ const getBookDetail = (request, h) => {
 const updateBook = (request, h) => {
   const body = request.payload;
   // Case : Payload tidak memiliki properti name
-  if (!Object.hasOwn(body, 'name')) {
+  if (!body.hasOwnProperty('name')) {
     const response = h.response({
       status: 'fail',
       message: 'Gagal memperbarui buku. Mohon isi nama buku',
